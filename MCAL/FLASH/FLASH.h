@@ -1,15 +1,7 @@
-/*
- * FLASH.h
- *
- *  Created on: Jun 8, 2023
- *      Author: Muham
- */
+#ifndef FLASH_H_
+#define FLASH_H_
 
-#ifndef FLASH_FLASH_H_
-#define FLASH_FLASH_H_
-
-#include "../../Common/STD_TYPES.h"
-#include "../../Common/util.h"
+#include "../STM32F401C8T6/STM32F401C8T6.h"
 
 /**************************************************************************************************************************************
 * MACRO		: 	To Configure 																						         		  *
@@ -35,20 +27,20 @@
 void MFLASH_voidAreaErase(void);
 /**************************************************************************************************************************************
 * Function Name		: MFLASH_voidSectorErase														    			                  *
-* Parameters (in)	: uint8 SectorNum 									                            			                      *
+* Parameters (in)	: 8 SectorNum 									                            			                      *
 * Parameters (out)	: None																						                      *
 * Return value		: None																						                      *
 * Description		: Function To Erase sector of flash memory main area								                              *
 **************************************************************************************************************************************/
-void MFLASH_voidSectorErase(uint8 SectorNum );
+void MFLASH_voidSectorErase(u8 SectorNum );
 /**************************************************************************************************************************************
 * Function Name		: MFLASH_voidWrite																				                  *
-* Parameters (in)	: uint32 Address, uint16 * Data, uint8 Length												                      *
+* Parameters (in)	: u32 Address, u16 * Data, u8 Length												                      *
 * Parameters (out)	: None																						                      *
 * Return value		: None																						                      *
 * Description		: Function To write data at flash memory address									                              *
 **************************************************************************************************************************************/
-void MFLASH_voidWrite(uint32 Address, uint16 * Data, uint8 Length);
+void MFLASH_voidWrite(u32 Address, u16 * Data, u8 Length);
 
 
 #endif /* FLASH_FLASH_H_ */

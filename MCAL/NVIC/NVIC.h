@@ -1,10 +1,8 @@
+#ifndef NVIC_INTERFACE_H_
+#define NVIC_INTERFACE_H_
 
-#ifndef NVIC_NVIC_INTERFACE_H_
-#define NVIC_NVIC_INTERFACE_H_
 
-
-#include "../../Common/util.h"
-#include "../../Common/STD_TYPES.h"
+#include "../STM32F401C8T6/STM32F401C8T6.h"
 
 /****************************************MNVIC_voidSetInterruptPrioretyGroupingStyle(inputs)******************************************/
 
@@ -56,7 +54,7 @@
 #define SUB_GROUP_14   14
 #define SUB_GROUP_15   15
 
-/****************************************MNVIC_Res_tSetPeripheralInterruptEnableState(inputs)******************************************/
+/****************************************MNVIC_Error_tSetPeripheralInterruptEnableState(inputs)******************************************/
 #define INTERRUPT_ENABLE    0
 #define INTERRUPT_DISABLE   1
 
@@ -79,7 +77,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void);
 * Return value          : None                                                                     *
 * Functionality         : Setting peripheral interrupt priority                                    *
 ***************************************************************************************************/
-void MNVIC_voidSetPeripheralInterruptPriorety(uint8 Peripheral_ID,uint8 Group_Priorety,uint8 SubGroup_Priorety);
+void MNVIC_voidSetPeripheralInterruptPriorety(u8 Peripheral_ID,u8 Group_Priorety,u8 SubGroup_Priorety);
 /***************************************************************************************************
 * Function Name         : MNVIC_SetPeripheralPriorety                                              *
 * Input Parameters(in)  : Peripheral ID - Group priority index - Subgroup priority index           *
@@ -87,31 +85,31 @@ void MNVIC_voidSetPeripheralInterruptPriorety(uint8 Peripheral_ID,uint8 Group_Pr
 * Return value          : None                                                                     *
 * Functionality         : Setting peripheral interrupt priority                                    *
 ***************************************************************************************************/
-res_t MNVIC_Res_tSetPeripheralInterruptEnableState(uint8 Interrupt_State,uint8 Peripheral_ID);
+Error_t MNVIC_Error_tSetPeripheralInterruptEnableState(u8 Interrupt_State,u8 Peripheral_ID);
 /***************************************************************************************************
-* Function Name         : MNVIC_Res_tSetPeripheralPendingEnableState                               *
+* Function Name         : MNVIC_Error_tSetPeripheralPendingEnableState                               *
 * Input Parameters(in)  : Peripheral ID - Group priority index - Subgroup priority index           *
 * Output Parameter(out) : None                                                                     *
 * Return value          : None                                                                     *
 * Functionality         : Setting peripheral pending state                                         *
 ***************************************************************************************************/
-res_t MNVIC_Res_tSetPeripheralPendingState(uint8 Interrupt_State,uint8 Peripheral_ID);
+Error_t MNVIC_Error_tSetPeripheralPendingState(u8 Interrupt_State,u8 Peripheral_ID);
 /***************************************************************************************************
-* Function Name         : MNVIC_uint8GetPeripheralActiveState                               	   *
-* Input Parameters(in)  : uint8 Peripheral_ID         											   *
+* Function Name         : MNVIC_u8GetPeripheralActiveState                               	   *
+* Input Parameters(in)  : u8 Peripheral_ID         											   *
 * Output Parameter(out) : None                                                                     *
 * Return value          : None                                                                     *
 * Functionality         : Reading Active state of peripheral                                       *
 ***************************************************************************************************/
-uint8 MNVIC_uint8GetPeripheralActiveState(uint8 Peripheral_ID);
+u8 MNVIC_u8GetPeripheralActiveState(u8 Peripheral_ID);
 /***************************************************************************************************
-* Function Name         : NVIC_uint8GetPeripheralActiveState                               	   	   *
-* Input Parameters(in)  : uint8 Peripheral_ID         											   *
+* Function Name         : NVIC_u8GetPeripheralActiveState                               	   	   *
+* Input Parameters(in)  : u8 Peripheral_ID         											   *
 * Output Parameter(out) : None                                                                     *
 * Return value          : None                                                                     *
 * Functionality         : Reading Active state of peripheral                                       *
 ***************************************************************************************************/
-res_t NVIC_SWTriggerInterrupt(uint8 Peripheral_ID);
+Error_t NVIC_SWTriggerInterrupt(u8 Peripheral_ID);
 
 
 

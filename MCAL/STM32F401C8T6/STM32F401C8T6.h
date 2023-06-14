@@ -206,9 +206,9 @@ TIMER_t;
 #define TIMER5		((TIMER_t*)TIM5_BASE)
 
 /*********************interrupt indices*********************/
-#define USART1_IrqNum	37
-#define USART1_IrqNum	38
-#define USART1_IrqNum	71
+//#define USART1_IrqNum	37
+//#define USART1_IrqNum	38
+//#define USART1_IrqNum	71
 
 /*********************clock enable Macros*********************/
 #define RCC_GPIOA_CLK_EN()			(RCC->AHB1ENR |= 1 << 0)
