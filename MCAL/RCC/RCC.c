@@ -1,78 +1,10 @@
-/*
- * RCC_program.c
- *
- *  Created on: May 21, 2023
- *      Author: Muham
- */
-
-/*Include */
-
-
-#include "../../Common/STD_TYPES.h"
-#include "../../Common/util.h"
-#include "RCC_interface.h"
-
-
-
-/* Defines */
-
-#define RCC_BaseAddress     0x40023800
-
-/* Types */
-
-typedef struct
-{
-	volatile uint32 RCC_CR;
-	volatile uint32 RCC_PLLCFGR;
-	volatile uint32 RCC_CFGR;
-	volatile uint32 RCC_CIR;
-	volatile uint32 RCC_AHB1RSTR;
-	volatile uint32 RCC_AHB2RSTR;
-	volatile uint32 Reserved1;
-	volatile uint32 Reserved2;
-	volatile uint32 RCC_APB1RSTR;
-	volatile uint32 RCC_APB2RSTR;
-	volatile uint32 Reserved3;
-	volatile uint32 Reserved4;
-	volatile uint32 RCC_AHB1ENR;
-	volatile uint32 RCC_AHB2ENR;
-	volatile uint32 Reserved5;
-	volatile uint32 Reserved6;
-	volatile uint32 RCC_APB1ENR;
-	volatile uint32 RCC_APB2ENR;
-	volatile uint32 Reserved7;
-	volatile uint32 Reserved8;
-	volatile uint32 RCC_AHB1LPENR;
-	volatile uint32 RCC_AHB2LPENR;
-	volatile uint32 Reserved9;
-	volatile uint32 Reserved10;
-	volatile uint32 RCC_APB1LPENR;
-	volatile uint32 RCC_APB2LPENR;
-	volatile uint32 Reserved11;
-	volatile uint32 Reserved12;
-	volatile uint32 RCC_BDCR;
-	volatile uint32 RCC_CSR;
-	volatile uint32 Reserved13;
-	volatile uint32 Reserved14;
-	volatile uint32 RCC_SSCGR;
-	volatile uint32 RCC_PLLI2SCFGR;
-	volatile uint32 Reserved15;
-	volatile uint32 RCC_DCKCFGR;
-
-}RCC_REGS;
-
-/* Variables */
-
-static volatile RCC_REGS * const RCC = (volatile RCC_REGS * const) RCC_BaseAddress ;
-
-
-/* Static Functions prototype */
+#include "RCC.h"
 
 /* Interface Implementation Functions */
 
-res_t MRCC_voidSetCLKSatus(uint32 CLK, uint8 STATUS)
+Error_t MRCC_voidSetCLKSatus(u32 CLK, u8 STATUS)
 {
-	res_t ErrState = NoError;
+	Error_t ErrState = NoError;
 	/*Switch on the Clock Source which one*/
 	switch(CLK)
 	{
@@ -83,13 +15,13 @@ res_t MRCC_voidSetCLKSatus(uint32 CLK, uint8 STATUS)
 		case STATUS_ENABLE:
 
 			/*Enable The HSI Clock Source*/
-			RCC->RCC_CR |=CLK_HSI;
+			RCC->CR |=CLK_HSI;
 			break;
 
 		case STATUS_DISABLE:
 
 			/*Disable The HSI Clock Source*/
-			RCC->RCC_CR &=~CLK_HSI;
+			RCC->CR &=~CLK_HSI;
 			break;
 		default:
 			/* input : status Error*/
@@ -106,13 +38,13 @@ res_t MRCC_voidSetCLKSatus(uint32 CLK, uint8 STATUS)
 			case STATUS_ENABLE:
 
 				/*Enable The HSE Clock Source*/
-				RCC->RCC_CR |=CLK_HSE;
+				RCC->CR |=CLK_HSE;
 				break;
 
 			case STATUS_DISABLE:
 
 				/*Disable The HSE Clock Source*/
-				RCC->RCC_CR &=~ CLK_HSE;
+				RCC->CR &=~ CLK_HSE;
 				break;
 
 			default:
@@ -130,12 +62,12 @@ res_t MRCC_voidSetCLKSatus(uint32 CLK, uint8 STATUS)
 				case STATUS_ENABLE:
 
 					/*Enable The PLL Clock Source*/
-					RCC->RCC_CR |=CLK_PLL;
+					RCC->CR |=CLK_PLL;
 					break;
 
 				case STATUS_DISABLE:
 					/*Disable The PLL Clock Source*/
-					RCC->RCC_CR &=~CLK_PLL;
+					RCC->CR &=~CLK_PLL;
 					break;
 
 				default:
@@ -153,16 +85,16 @@ res_t MRCC_voidSetCLKSatus(uint32 CLK, uint8 STATUS)
 	return ErrState;
 }
 
-uint8 MRCC_uint8CheckClkSourceReady(uint8 CLK_RDY)
+u8 MRCC_u8CheckClkSourceReady(u8 CLK_RDY)
 {
 	/*Variable To Store The Return Value That the Clock Source is Ready or Not*/
-	uint8 ReturnStatus = CLK_SOURCE_READY;
+	u8 ReturnStatus = CLK_SOURCE_READY;
 	/*Variable To Store The Time Out Value Of Waiting*/
-	uint32 TimeOut = 0;
+	u32 TimeOut = 0;
 
 	/*Busy Waiting to The Clock Source To Be Ready*/
-	while(((RCC->RCC_CR>>CLK_RDY) & 0x01 ) == CLK_SOURCE_NOT_READY)
-		// while(GET_BIT(RCC -> RCC_CR, CLK_RDY) == CLK_SOURCE_NOT_READY)
+	while(((RCC->CR>>CLK_RDY) & 0x01 ) == CLK_SOURCE_NOT_READY)
+		// while(GET_BIT(RCC -> CR, CLK_RDY) == CLK_SOURCE_NOT_READY)
 	{
 		/*Incrementing the Time Out Value*/
 		TimeOut++;
@@ -178,37 +110,37 @@ uint8 MRCC_uint8CheckClkSourceReady(uint8 CLK_RDY)
 	return ReturnStatus;
 }
 
-res_t MRCC_voidSetClkSource(uint32 sys_clk)
+Error_t MRCC_voidSetClkSource(u32 sys_clk)
 {
-	res_t ErrorState=NoError;
-	uint32 temp;
+	Error_t ErrorState=NoError;
+	u32 temp;
 	switch (sys_clk)
 	{
 	case sys_clk_HSI:
 
 		/*Set The HSI To be the System Clock Source By Set SW Bits 0b00*/
-		temp = RCC -> RCC_CFGR ;
-		temp &= RCC_CFGR_SW_BITS_MASK;
+		temp = RCC -> CFGR ;
+		temp &= CFGR_SW_BITS_MASK;
 		temp |= sys_clk_HSI;
-		RCC -> RCC_CFGR = temp;
+		RCC -> CFGR = temp;
 		break;
 
 	case sys_clk_HSE:
 
 		/*Set The HSE To be the System Clock Source By Set SW Bits 0b01*/
-		temp =RCC -> RCC_CFGR;
-		temp &= RCC_CFGR_SW_BITS_MASK;
+		temp =RCC -> CFGR;
+		temp &= CFGR_SW_BITS_MASK;
 		temp |= sys_clk_HSE;
-		RCC -> RCC_CFGR = temp;
+		RCC -> CFGR = temp;
 		break;
 
 	case sys_clk_PLL:
 
 		/*Set The PLL To be the System Clock Source By Set SW Bits 0b10*/
-		temp =RCC -> RCC_CFGR;
-		temp &= RCC_CFGR_SW_BITS_MASK;
+		temp =RCC -> CFGR;
+		temp &= CFGR_SW_BITS_MASK;
 		temp |= sys_clk_PLL;
-		RCC -> RCC_CFGR = temp;
+		RCC -> CFGR = temp;
 		break;
 
 	default:
@@ -220,50 +152,50 @@ res_t MRCC_voidSetClkSource(uint32 sys_clk)
 	return ErrorState;
 }
 
-res_t MRCC_voidSetPLLConfig(uint8 PLL_SRC,uint8 PLLM,uint16 PLLN,uint8 PLLP,uint8 PLLQ)
+Error_t MRCC_voidSetPLLConfig(u32 PLL_SRC,u8 PLLM,u16 PLLN,u8 PLLP,u8 PLLQ)
 {
-	res_t ErrorState= NoError ;
+	Error_t ErrorState= NoError ;
 
-	if(PLL_SRC == PLL_SRC_HSI)
+	switch (PLL_SRC)
 	{
-		RCC->RCC_PLLCFGR &= PLL_SRC_HSI;
+		case PLL_SRC_HSI:
+			RCC->PLLCFGR &= PLL_SRC_HSI;
+			break;
+		case PLL_SRC_HSE:
+			RCC->PLLCFGR |= PLL_SRC_HSE ;
+			break;
+		default:
+			ErrorState = Error;
+			break;
+	}
 
-	}
-	else if(PLL_SRC == PLL_SRC_HSE)
-	{
-		RCC->RCC_PLLCFGR |=PLL_SRC_HSE ;
-	}
-	else
-	{
-		ErrorState = Error;
-	}
 	if((PLLM>=2 && PLLM<=62) && (PLLN >= 192 && PLLN <= 432) && (PLLQ >=2 && PLLQ <=15))
 	{
 
 		/* masking of PLLM bits and set the PLLM value */
-		uint32 temp= RCC->RCC_PLLCFGR;
+		u32 temp= RCC->PLLCFGR;
 		temp &= PLLM_MASK;
 		temp |= PLLM<<PLLM_startBIT ;
-		RCC->RCC_PLLCFGR= temp;
+		RCC->PLLCFGR= temp;
 
 		/*masking of PLLN bits and set the PLLN value */
-		temp =RCC->RCC_PLLCFGR;
+		temp =RCC->PLLCFGR;
 		temp &= PLLN_MASK;
 		temp |= PLLN<<PLLN_startBIT;
-		RCC->RCC_PLLCFGR=temp;
+		RCC->PLLCFGR=temp;
 
 
 		/*Masking of PLLP bits and set the PLLP value */
-		temp =RCC->RCC_PLLCFGR;
+		temp =RCC->PLLCFGR;
 		temp &= PLLP_MASK;
 		temp |= PLLP<<PLLP_startBIT;
-		RCC->RCC_PLLCFGR=temp;
+		RCC->PLLCFGR=temp;
 
 		/*Masking of PLLQ bits and set the PLLQ value */
-		temp =RCC->RCC_PLLCFGR;
+		temp =RCC->PLLCFGR;
 		temp &= PLLQ_MASK;
 		temp |= PLLQ<<PLLQ_starBIT;
-		RCC->RCC_PLLCFGR=temp;
+		RCC->PLLCFGR=temp;
 	}
 	else
 	{
@@ -273,9 +205,9 @@ res_t MRCC_voidSetPLLConfig(uint8 PLL_SRC,uint8 PLLM,uint16 PLLN,uint8 PLLP,uint
 	return ErrorState;
 }
 
-res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
+Error_t MRCC_voidSetPeripheralStaus(u8 Bus,u8 Peripheral,u8 STATUS)
 {
-	res_t ErrorState = NoError;
+	Error_t ErrorState = NoError;
 	switch(Bus)
 	{
 	case Bus_AHB1:
@@ -284,13 +216,13 @@ res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
 		case STATUS_ENABLE:
 			/* Enable the clock of peripheral on AHB1 Bus */
 
-			RCC->RCC_AHB1ENR |= (1<<Peripheral);
+			RCC->AHB1ENR |= (1<<Peripheral);
 			break;
 
 		case STATUS_DISABLE:
 
 			/* Disable the clock of peripheral on AHB1 Bus */
-			RCC->RCC_AHB1ENR &= ~(1<< Peripheral);
+			RCC->AHB1ENR &= ~(1<< Peripheral);
 			break;
 
 		default:
@@ -305,12 +237,12 @@ res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
 			{
 			case STATUS_ENABLE:
 				/* Enable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_AHB2ENR |=(1<<Peripheral);
+				RCC->AHB2ENR |=(1<<Peripheral);
 				break;
 
 			case STATUS_DISABLE:
 				/* Disable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_AHB2ENR &= ~ (1<<Peripheral);
+				RCC->AHB2ENR &= ~ (1<<Peripheral);
 				break;
 
 			default:
@@ -327,12 +259,12 @@ res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
 			case STATUS_ENABLE:
 
 				/* Enable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_APB1ENR |= (1<<Peripheral);
+				RCC->APB1ENR |= (1<<Peripheral);
 				break;
 			case STATUS_DISABLE:
 
 				/* Disable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_APB1ENR &= ~(1<<Peripheral);
+				RCC->APB1ENR &= ~(1<<Peripheral);
 				break;
 			default:
 				/* Input peripheral of AHB1 bus Error */
@@ -347,11 +279,11 @@ res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
 			{
 			case STATUS_ENABLE:
 				/* Enable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_APB2ENR |= (1<<Peripheral);
+				RCC->APB2ENR |= (1<<Peripheral);
 				break;
 			case STATUS_DISABLE:
 				/* Disable the clock of peripheral on AHB1 Bus */
-				RCC->RCC_APB2ENR &= ~ (1<<Peripheral);
+				RCC->APB2ENR &= ~ (1<<Peripheral);
 				break;
 			default:
 				/* Input peripheral of AHB1 bus Error */
@@ -368,41 +300,12 @@ res_t MRCC_voidSetPeripheralStaus(uint8 Bus,uint8 Peripheral,uint8 STATUS)
 	return ErrorState;
 }
 
-res_t MRCC_voidSetBusPrescaler(uint8 Bus, uint8 PRESCALER)
+void MRCC_voidSetBusPrescaler(u8 Bus, u8 PRESCALER)
 {
-	res_t ErrorState=NoError;
-	uint32 temp;
-	switch(Bus)
-	{
-	case Bus_AHB1 :
-	case Bus_AHB2 :
-
-		temp=RCC->RCC_CFGR;
-		temp &=~(0xF<<4);
-		temp |=PRESCALER;
-		RCC->RCC_CFGR=temp;
-	break;
-
-	case Bus_APB1:
-
-		temp=RCC->RCC_CFGR;
-		temp &=~(0xF<<10);
-		temp |=PRESCALER;
-		RCC->RCC_CFGR=temp;
-	break;
-
-	case Bus_APB2:
-
-		temp=RCC->RCC_CFGR;
-		temp &=~(0xF<<13);
-		temp |=PRESCALER;
-		RCC->RCC_CFGR=temp;
-	break;
-	default :
-		ErrorState=Error;
-		break;
-	}
-	return ErrorState;
+	u32 temp = RCC->CFGR;
+	temp &=~(0xF<<Bus);
+	temp |= PRESCALER << Bus;
+	RCC->CFGR=temp;
 }
 
 void MRCC_voidInit(void)
@@ -415,7 +318,7 @@ void MRCC_voidInit(void)
 			MRCC_voidSetCLKSatus(CLK_HSE, STATUS_ENABLE);
 
 		/*Check That The HSE Clock Source is Ready and Stable*/
-		 if(MRCC_uint8CheckClkSourceReady(CLK_RDY_HSE) != CLK_SOURCE_NOT_READY)
+		 if(MRCC_u8CheckClkSourceReady(CLK_RDY_HSE) != CLK_SOURCE_NOT_READY)
 		 {
 			/*Selecting That HSE Is the Clock Source of The System*/
 			 MRCC_voidSetClkSource(sys_clk_HSE);
@@ -433,7 +336,7 @@ void MRCC_voidInit(void)
 		 MRCC_voidSetClkStatus(CLK_HSI, STATUS_ENABLE);
 
 		/*Check That The HSI Clock Source is Ready and Stable*/
-		 if(MRCC_uint8CheckClkSourceReady(CLK_RDY_HSI) != CLK_SOURCE_NOT_READY)
+		 if(MRCC_u8CheckClkSourceReady(CLK_RDY_HSI) != CLK_SOURCE_NOT_READY)
 		 {
 			/*Selecting That HSI Is the Clock Source of The System*/
 			 MRCC_voidSetClkSource(sys_clk_HSI);
@@ -453,7 +356,7 @@ void MRCC_voidInit(void)
 			 MRCC_voidSetClkStatus(CLK_HSE, STATUS_ENABLE);
 
 			/*Check That The HSE Clock Source is Ready and Stable*/
-			 if(MRCC_uint8CheckClkSourceReady(CLK_RDY_HSE) != CLK_SOURCE_NOT_READY)
+			 if(MRCC_u8CheckClkSourceReady(CLK_RDY_HSE) != CLK_SOURCE_NOT_READY)
 			 {
 				/*Selecting That HSI Is the Clock Source of The System*/
 				 MRCC_voidSetClkSource(sys_clk_HSI);
@@ -471,7 +374,7 @@ void MRCC_voidInit(void)
 				 MRCC_voidSetClkStatus(CLK_PLL, ENABLE);
 
 				/*Check That The PLL Clock Source is Ready and Stable*/
-				if(MRCC_uint8CheckClkSourceReady(CLK_RDY_PLL) != CLK_SOURCE_NOT_READY)
+				if(MRCC_u8CheckClkSourceReady(CLK_RDY_PLL) != CLK_SOURCE_NOT_READY)
 				{
 					/*Selecting That PLL Is the Clock Source of The System*/
 					 MRCC_voidSetClkSource(sys_clk_PLL);
@@ -488,7 +391,7 @@ void MRCC_voidInit(void)
 			 MRCC_voidSetClkStatus(HSI, ENABLE);
 
 			/*Check That The HSI Clock Source is Ready and Stable*/
-			 if(MRCC_uint8CheckClkSourceReady(HSI_RDY) != CLK_SOURCE_NOT_READY)
+			 if(MRCC_u8CheckClkSourceReady(HSI_RDY) != CLK_SOURCE_NOT_READY)
 			 {
 				/*Selecting That HSI Is the Clock Source of The System*/
 				 MRCC_voidSetClkSource(HSI);
@@ -506,7 +409,7 @@ void MRCC_voidInit(void)
 				 MRCC_voidSetClkStatus(PLL, ENABLE);
 
 				/*Check That The PLL Clock Source is Ready and Stable*/
-				if(MRCC_uint8CheckClkSourceReady(PLL_RDY) != CLK_SOURCE_NOT_READY)
+				if(MRCC_u8CheckClkSourceReady(PLL_RDY) != CLK_SOURCE_NOT_READY)
 				{
 					/*Selecting That PLL Is the Clock Source of The System*/
 					 MRCC_voidSetClkSource(PLL);

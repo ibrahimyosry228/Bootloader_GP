@@ -1,8 +1,7 @@
 /*********************includes*********************/
-#include "../../UTIL/Types.h"
+#include "../../MCAL/TIMER/TIMER.h"
 #include "../../MCAL/GPIO/GPIO.h"
 #include "DC_Motor.h"
-#include "DC_Motor_Config.h"
 
 void HMotor_Init(void)
 {
@@ -40,8 +39,8 @@ void HMotor_Init(void)
 void HMotor_Move(u8 Direction, u16 Speed)
 {
 	/*set Ena, Enb pins to be driven by PWM signals of frequency = Motor_Frequency, and duty cycle corresponding to the desired speed*/
-	MTimer3_PWMInit(Motor_Frequency, Speed, L298_EnaPort, L298_EnaPin);
-	MTimer3_PWMInit(Motor_Frequency, Speed, L298_EnbPort, L298_EnbPin);
+	MTimer_GeneratePWM(TIMER3, Motor_Frequency, Speed);
+	MTimer_GeneratePWM(TIMER3, Motor_Frequency, Speed);
 
 	/*set the direction of rotation of the 4 motors according to the specified motion direction*/
     switch (Direction)

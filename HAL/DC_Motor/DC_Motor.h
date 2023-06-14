@@ -2,7 +2,7 @@
 #define _DC_MOTOR_H_
 
 /*********************includes*********************/
-#include "../../UTIL/Types.h"
+#include "DC_Motor_Config.h"
 
 /*********************includes*********************/
 #define Direction_Stop          (u8)0

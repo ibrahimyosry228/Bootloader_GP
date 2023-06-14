@@ -1,15 +1,8 @@
-#include<stdio.h>
-
-
 #include "NVIC.h"
-#include "../../Common/STD_TYPES.h"
-#include "../../Common/util.h"
-
-
 
 
 /*System control block-->Application interrupt and reset control register address(To set grouping style)*/
-#define   SCB_AIRCR_REG       (*(volatile uint32_t*)(0xE000ED0C))
+#define   SCB_AIRCR_REG       (*(volatile u32*)(0xE000ED0C))
 
 /*NVIC base memory address */
 #define   NVIC_BaseAddress    0xE000E100
@@ -34,19 +27,19 @@
 
 typedef struct
 {
-	volatile uint32_t ISER[8];
-	volatile uint32_t Res_1[24];
-	volatile uint32_t ICER[8];
-	volatile uint32_t Res_2[24];
-	volatile uint32_t ISPR[8];
-	volatile uint32_t Res_3[24];
-	volatile uint32_t ICPR[8];
-	volatile uint32_t Res_4[24];
-	volatile uint32_t IABR[8];
-	volatile uint32_t Res_5[56];
-	volatile uint8_t  IPR[240];
-	volatile uint32_t Res_6[580];
-	volatile uint32_t STIR;
+	volatile u32 ISER[8];
+	volatile u32 Res_1[24];
+	volatile u32 ICER[8];
+	volatile u32 Res_2[24];
+	volatile u32 ISPR[8];
+	volatile u32 Res_3[24];
+	volatile u32 ICPR[8];
+	volatile u32 Res_4[24];
+	volatile u32 IABR[8];
+	volatile u32 Res_5[56];
+	volatile u8  IPR[240];
+	volatile u32 Res_6[580];
+	volatile u32 STIR;
 
 }NVIC_t;
 
@@ -63,7 +56,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 
 	SCB_AIRCR_REG=GROUP_16__SUBGROUP_0;
 
-	for (uint8 i=0;i<240;i++)
+	for (u8 i=0;i<240;i++)
 		{
 			NVIC_REGS->IPR[i]=	;
 		}
@@ -72,7 +65,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 
 	SCB_AIRCR_REG=GROUP_8__SUBGROUP_2;
 
-	for (uint8 i=0;i<240;i++)
+	for (u8 i=0;i<240;i++)
 	{
 		NVIC_REGS->IPR[i]=0;
 	}
@@ -80,7 +73,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 #elif PRI_GROUPING_STYLE==GROUP_4__SUBGROUP_4
 
 	SCB_AIRCR_REG=GROUP_4__SUBGROUP_4;
-	for (uint8 i=0;i<240;i++)
+	for (u8 i=0;i<240;i++)
 	{
 		NVIC_REGS->IPR[i]=0;
 	}
@@ -90,7 +83,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 
 	SCB_AIRCR_REG=GROUP_2__SUBGROUP_8;
 
-	for (uint8 i=0;i<240;i++)
+	for (u8 i=0;i<240;i++)
 	{
 		NVIC_REGS->IPR[i]=0;
 	}
@@ -100,7 +93,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 
 	SCB_AIRCR_REG=GROUP_0__SUBGROUP_16;
 
-	for (uint8 i=0;i<240;i++)
+	for (u8 i=0;i<240;i++)
 	{
 		NVIC_REGS->IPR[i]=0;
 	}
@@ -112,7 +105,7 @@ void MNVIC_voidSetInterruptPrioretyGroupingStyle(void)
 #endif
 
 }
-void MNVIC_voidSetPeripheralInterruptPriorety(uint8_t Peripheral_ID,uint8_t Group_Priorety,uint8_t SubGroup_Priorety)
+void MNVIC_voidSetPeripheralInterruptPriorety(u8 Peripheral_ID,u8 Group_Priorety,u8 SubGroup_Priorety)
 {
 #if PRI_GROUPING_STYLE==GROUP_16__SUBGROUP_0
 
@@ -144,9 +137,9 @@ void MNVIC_voidSetPeripheralInterruptPriorety(uint8_t Peripheral_ID,uint8_t Grou
 #endif
 
 }
-res_t MNVIC_Res_tSetPeripheralInterruptEnableState(uint8_t Interrupt_State,uint8_t Peripheral_ID)
+Error_t MNVIC_Error_tSetPeripheralInterruptEnableState(u8 Interrupt_State,u8 Peripheral_ID)
 {
-	res_t Error_State = NoError;
+	Error_t Error_State = NoError;
 
 	if(Interrupt_State==INTERRUPT_ENABLE)
 	{
@@ -163,9 +156,9 @@ res_t MNVIC_Res_tSetPeripheralInterruptEnableState(uint8_t Interrupt_State,uint8
 	return Error_State;
 }
 
-res_t MNVIC_Res_tSetPeripheralPendingState(uint8 Interrupt_State,uint8 Peripheral_ID)
+Error_t MNVIC_Error_tSetPeripheralPendingState(u8 Interrupt_State,u8 Peripheral_ID)
 {
-	res_t Error_State = NoError;
+	Error_t Error_State = NoError;
 
 	if(Interrupt_State==INTERRUPT_ENABLE)
 	{
@@ -214,9 +207,9 @@ res_t MNVIC_Res_tSetPeripheralPendingState(uint8 Interrupt_State,uint8 Periphera
 	return Error_State;
 }
 
-uint8 MNVIC_uint8GetPeripheralActiveState(uint8 Peripheral_ID)
+u8 MNVIC_u8GetPeripheralActiveState(u8 Peripheral_ID)
 {
-	uint8 res;
+	u8 res;
 
 
 	res=( ((NVIC_REGS->IABR[Peripheral_ID/NVIC_REG_LENGTH])>>(Peripheral_ID % NVIC_REG_LENGTH)) & 0x1) ;
@@ -224,9 +217,9 @@ uint8 MNVIC_uint8GetPeripheralActiveState(uint8 Peripheral_ID)
 	return res;
 
 }
-res_t NVIC_SWTriggerInterrupt(uint8 Peripheral_ID)
+Error_t NVIC_SWTriggerInterrupt(u8 Peripheral_ID)
 {
-	res_t ErrorState = NoError;
+	Error_t ErrorState = NoError;
 
 	if(Peripheral_ID >=0 && Peripheral_ID<=239)
 		NVIC_REGS->STIR=(Peripheral_ID);
