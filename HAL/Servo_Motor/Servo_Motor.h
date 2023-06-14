@@ -2,7 +2,7 @@
 #define SERVO_MOTOR_H_
 
 /*********************includes*********************/
-#include "../../UTIL/Types.h"
+#include "Servo_Motor_Config.h"
 
 /*@reference SERVO_ANGLE_DEFINE*/
 #define Angle_0 			(u16)50
