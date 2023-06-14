@@ -1,8 +1,6 @@
 #ifndef _MOTOR_CONFIG_H_
 #define _MOTOR_CONFIG_H_
 
-#include "../../MCAL/STM32F401C8T6/STM32F401C8T6.h"
-#include "../../MCAL/GPIO/GPIO.h"
 
 /*configure the frequency of driving the DC motors*/
 #define Motor_Frequency			(u32)1000
