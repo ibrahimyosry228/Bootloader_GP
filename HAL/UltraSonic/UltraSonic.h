@@ -6,8 +6,8 @@
 * Function Name         : UltraSonic_voidInit                                                                                        *
 * Input Parameters(in)  : None                                                                                                       *
 * Output Parameter(out) : None                                                                                                       *
-* Return value          : None                                                                               *
-* Functionality         : Intitiazation of Ultrasonic (Timer-Channel-Trigger and Echo Pins)                                                                   *
+* Return value          : None                                                                                                       *
+* Functionality         : Intitiazation of Ultrasonic (Timer-Channel-Trigger and Echo Pins)                                          *
 **************************************************************************************************************************************/
 void UltraSonic_voidInit(void);
 /*************************************************************************************************************************************
