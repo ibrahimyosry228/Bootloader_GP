@@ -13,8 +13,8 @@
 #ifndef USART_USART_DRIVER_H_
 #define USART_USART_DRIVER_H_
 /************************************************includes**************************************************************************/
-#include "../../common/STD_TYPE.h"
-#include "../../common/Util.h"
+#include "../STM32F401C8T6/STM32F401C8T6.h"
+#include "USART_Config.h"
 /************************************************USARTx****************************************************************************/
 #define USART_1				1
 #define USART_2				2
@@ -28,21 +28,21 @@
 * Function Name		: MUSART_voidInit
 * Parameters (in)	: options from [USART_x]
 * Parameters (out)	: NONE
-* Return value		: enum ret_t
+* Return value		: enum Error_t
 * Description		: Function used to initialize the selected USART
 * Constrains		: you must enable the selected peripheral CLK first
 * *************************************************************************/
-ret_t MUSART_voidInit(u32 USART);
+Error_t MUSART_voidInit(u32 USART);
 
 /***************************************************************************
-* Function Name		: MUSART_ret_tSendByte
+* Function Name		: MUSART_Error_tSendByte
 * Parameters (in)	: options from [USART_x - u8 DATA send ,timeout]
 * Parameters (out)	: NONE
-* Return value		: enum ret_t
+* Return value		: enum Error_t
 * Description		: Function used to send byte
 * Constrains		: NONE
 * *************************************************************************/
-ret_t MUSART_ret_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut);
+Error_t MUSART_Error_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut);
 
 /***************************************************************************
 * Function Name		: MUSART_u8ReceiveByte
@@ -55,14 +55,14 @@ ret_t MUSART_ret_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut);
 u8 MUSART_u8ReceiveByteSync(u32 USART,u32 TimeOut);
 
 /***************************************************************************
-* Function Name		: MUSART_ret_tSendString
+* Function Name		: MUSART_Error_tSendString
 * Parameters (in)	: options from [USART_x - pointer to string - timeout]
 * Parameters (out)	: NONE
-* Return value		: enum ret_t
+* Return value		: enum Error_t
 * Description		: Function used to Send string
 * Constrains		: NONE
 * *************************************************************************/
-ret_t MUSART_ret_tSendStringSync(u32 USART,u8 *Send_Strg,u32 TimeOut);
+Error_t MUSART_Error_tSendStringSync(u32 USART,u8 *Send_Strg,u32 TimeOut);
 
 /***************************************************************************
 * Function Name		: MUSART_voidReceiveStringSync

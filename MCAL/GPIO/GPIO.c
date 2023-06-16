@@ -102,3 +102,10 @@ void MGPIO_TogglePin(GPIO_t* GPIOx, u8 PinNumber)
 	/*toggle the corresponding in ODR register*/
 	GPIOx->ODR ^= (1 << PinNumber);
 }
+
+void MGPIO_SetAlternateFun(GPIO_t* GPIOx, u8 PinNumber, u8 AF)
+{
+	u32* AFR;
+	AFR = (PinNumber < PIN8) ? &GPIOx->AFRL : &GPIOx->AFRH;
+	*AFR |= AF << (PinNumber * 4);
+}
