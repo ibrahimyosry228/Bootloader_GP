@@ -1,6 +1,4 @@
-#include<stdio.h>
-#include "../Common/Utility.h"
-#include "ICU_Interface.h"
+#include "ICU.h"
 
 
 #define   TIM1_BaseAddress    0X40010000
@@ -13,28 +11,28 @@
 
 typedef struct
 {
-	 uint32_t CR1;
-	 uint32_t CR2;
-	 uint32_t SMCR;
-	 uint32_t DIER;
-	 uint32_t SR;
-	 uint32_t EGR;
-	 uint32_t CCMR1;
-	 uint32_t CCMR2;
-	 uint32_t CCER;
-	 uint32_t CNT;
-	 uint32_t PSC;
-	 uint32_t ARR;
-	 uint32_t RES1;
-	 uint32_t CCR1;
-	 uint32_t CCR2;
-	 uint32_t CCR3;
-	 uint32_t CCR4;
-	 uint32_t RES2;
-	 uint32_t DCR;
-	 uint32_t DMAR;
-	 uint32_t TIM2_OR;
-	 uint32_t TIM5_OR;
+	 u32 CR1;
+	 u32 CR2;
+	 u32 SMCR;
+	 u32 DIER;
+	 u32 SR;
+	 u32 EGR;
+	 u32 CCMR1;
+	 u32 CCMR2;
+	 u32 CCER;
+	 u32 CNT;
+	 u32 PSC;
+	 u32 ARR;
+	 u32 RES1;
+	 u32 CCR1;
+	 u32 CCR2;
+	 u32 CCR3;
+	 u32 CCR4;
+	 u32 RES2;
+	 u32 DCR;
+	 u32 DMAR;
+	 u32 TIM2_OR;
+	 u32 TIM5_OR;
 
 
 }TIM_t;
@@ -48,9 +46,9 @@ typedef struct
 
 
 
-Res_t TIM_Res_tSetCounterState(COUNTER_STATE_t COUNTER_STATE,TIM_NUMBER_t TIM)
+Error_t TIM_Error_tSetCounterState(COUNTER_STATE_t COUNTER_STATE,TIM_NUMBER_t TIM)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 
 	if(COUNTER_STATE==COUNTER_STATE_ENABLE)
 	{
@@ -80,9 +78,9 @@ Res_t TIM_Res_tSetCounterState(COUNTER_STATE_t COUNTER_STATE,TIM_NUMBER_t TIM)
 	}
 	return Error_State;
 }
-Res_t TIM_Res_tSetCapture_CompareInterruptState(CAPTURE_COMPARE_INTERRUPT_State_t CAPTURE_COMPARE_INTERRUPT_State,TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
+Error_t TIM_Error_tSetCapture_CompareInterruptState(CAPTURE_COMPARE_INTERRUPT_State_t CAPTURE_COMPARE_INTERRUPT_State,TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 	if(CAPTURE_COMPARE_INTERRUPT_State==CAPTURE_COMPARE_INTERRUPT_ENABLE)
 	{
 		switch(TIM)
@@ -127,9 +125,9 @@ Res_t TIM_Res_tSetCapture_CompareInterruptState(CAPTURE_COMPARE_INTERRUPT_State_
 	}
 	return Error_State;
 }
-Res_t TIM_Res_tSetTriggerInterruptState(TRIGGER_INTERRUPT_STATE_t TRIGGER_INTERRUPT_STATE,TIM_NUMBER_t TIM)
+Error_t TIM_Error_tSetTriggerInterruptState(TRIGGER_INTERRUPT_STATE_t TRIGGER_INTERRUPT_STATE,TIM_NUMBER_t TIM)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 	if(TRIGGER_INTERRUPT_STATE==TRIGGER_INTERRUPT_STATE_ENABLE)
 	{
 		switch(TIM)
@@ -158,10 +156,10 @@ Res_t TIM_Res_tSetTriggerInterruptState(TRIGGER_INTERRUPT_STATE_t TRIGGER_INTERR
 	}
 	return Error_State;
 }
-Res_t TIM_Res_tSetChannelState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CHANNEL_STATE_t CHANNEL_STATE)
+Error_t TIM_Error_tSetChannelState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CHANNEL_STATE_t CHANNEL_STATE)
 {
-	Res_t Error_State=NoError;
-	//uint32_t temp;
+	Error_t Error_State=NoError;
+	//u32 temp;
 
 		switch(TIM)
 		{
@@ -208,9 +206,9 @@ Res_t TIM_Res_tSetChannelState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CHANNEL_STATE_
 		}
 		return Error_State;
 }
-Res_t TIM_Res_tSetCapture_CompareState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CAPTURE_COMPARE_STATE_t CAPTURE_COMPARE_STATE)
+Error_t TIM_Error_tSetCapture_CompareState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CAPTURE_COMPARE_STATE_t CAPTURE_COMPARE_STATE)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 	if(CAPTURE_COMPARE_STATE==CAPTURE_COMPARE_STATE_ENABLE)
 	{
 		switch(TIM)
@@ -311,9 +309,9 @@ Res_t TIM_Res_tSetCapture_CompareState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CAPTUR
 	}
     return Error_State;
 }
-Res_t TIM_Res_tSetInputCaptureEdgeTrigger(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,INPUT_CAPTURE_TRIGGER_t INPUT_CAPTURE_TRIGGER)
+Error_t TIM_Error_tSetInputCaptureEdgeTrigger(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,INPUT_CAPTURE_TRIGGER_t INPUT_CAPTURE_TRIGGER)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 
 	if(INPUT_CAPTURE_TRIGGER==INPUT_CAPTURE_TRIGGER_RISING_EDGE)
 	{
@@ -402,9 +400,9 @@ Res_t TIM_Res_tSetInputCaptureEdgeTrigger(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,INP
 }
 
 
-uint32_t TIM_uint32_tGetCaptureValueTIM2_TIM5(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
+u32 TIM_u32GetCaptureValueTIM2_TIM5(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 {
-	uint32_t Capture_Value;
+	u32 Capture_Value;
 
 	if(TIM==TIM_2)
 	{
@@ -424,9 +422,9 @@ uint32_t TIM_uint32_tGetCaptureValueTIM2_TIM5(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL
 	}
 	return Capture_Value;
 }
-uint16_t TIM_uint16_tGetCaptureValue(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
+u16 TIM_u16GetCaptureValue(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 {
-	uint16_t Capture_Value;
+	u16 Capture_Value;
 
 	switch(TIM)
 	{
@@ -464,9 +462,9 @@ uint16_t TIM_uint16_tGetCaptureValue(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 	}
 	return Capture_Value;
 }
-Res_t TIM_Res_tSetPrescaler(TIM_NUMBER_t TIM,uint16_t PRESCALER)
+Error_t TIM_Error_tSetPrescaler(TIM_NUMBER_t TIM,u16 PRESCALER)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 
 	switch(TIM)
 	{
@@ -478,9 +476,9 @@ Res_t TIM_Res_tSetPrescaler(TIM_NUMBER_t TIM,uint16_t PRESCALER)
 	}
 	return Error_State;
 }
-Res_t TIM_Res_tSetPreloadValue(TIM_NUMBER_t TIM,uint32_t PRELOAD)
+Error_t TIM_Error_tSetPreloadValue(TIM_NUMBER_t TIM,u32 PRELOAD)
 {
-	Res_t Error_State=NoError;
+	Error_t Error_State=NoError;
 
 	switch(TIM)
 	{
@@ -492,9 +490,9 @@ Res_t TIM_Res_tSetPreloadValue(TIM_NUMBER_t TIM,uint32_t PRELOAD)
 	}
 	return Error_State;
 }
-uint8_t TIM_uint8_tGetFlag(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
+u8 TIM_u8GetFlag(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 {
-	uint8_t Flag=0;
+	u8 Flag=0;
 
 	switch(TIM)
 	{
@@ -528,7 +526,7 @@ uint8_t TIM_uint8_tGetFlag(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 	}
 	return Flag;
 }
-void TIM_voidSetCounterValue(TIM_NUMBER_t TIM,uint32_t COUNTER_VALUE)
+void TIM_voidSetCounterValue(TIM_NUMBER_t TIM,u32 COUNTER_VALUE)
 {
 	switch(TIM)
 	{
@@ -576,30 +574,30 @@ void delay15us(void)
 
 }
 /*
-void GetValue(uint32_t*x1,uint32_t*y1)
+void GetValue(u32*x1,u32*y1)
 {
 	//while(!((TIM2->SR>>1)&1));
-	while(!TIM_uint8_tGetFlag(TIM_2,CHANNEL_1));
+	while(!TIM_u8GetFlag(TIM_2,CHANNEL_1));
 	//*x1= TIM2->CCR1;
-	*x1=TIM_uint32_tGetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_1);
+	*x1=TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_1);
 	TIM2->EGR|=(1<<0);
-	//TIM_Res_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_DISABLE);
-	TIM_Res_tSetCounterState(COUNTER_STATE_ENABLE,TIM_2);
-	TIM_Res_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_1,INPUT_CAPTURE_TRIGGER_FALLING_EDGE);
-	//TIM_Res_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_ENABLE);
+	//TIM_Error_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_DISABLE);
+	TIM_Error_tSetCounterState(COUNTER_STATE_ENABLE,TIM_2);
+	TIM_Error_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_1,INPUT_CAPTURE_TRIGGER_FALLING_EDGE);
+	//TIM_Error_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_ENABLE);
 
 
 	//while(!((TIM2->SR>>1)&1));
-	while(!TIM_uint8_tGetFlag(TIM_2,CHANNEL_1));
+	while(!TIM_u8GetFlag(TIM_2,CHANNEL_1));
 
-	//TIM_Res_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_DISABLE);
+	//TIM_Error_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_DISABLE);
 	//*y1= TIM2->CCR1;
-	*y1=TIM_uint32_tGetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_1);
-	TIM_Res_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_1,INPUT_CAPTURE_TRIGGER_RISING_EDGE);
-	TIM_Res_tSetCounterState(COUNTER_STATE_DISABLE,TIM_2);
+	*y1=TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_1);
+	TIM_Error_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_1,INPUT_CAPTURE_TRIGGER_RISING_EDGE);
+	TIM_Error_tSetCounterState(COUNTER_STATE_DISABLE,TIM_2);
 	//TIM2->SR&=~(1<<0);
 	TIM2->CNT=0;
-	//TIM_Res_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_ENABLE);
+	//TIM_Error_tSetCapture_CompareState(TIM_2,CHANNEL_1,CAPTURE_COMPARE_STATE_ENABLE);
 
 }*/
 

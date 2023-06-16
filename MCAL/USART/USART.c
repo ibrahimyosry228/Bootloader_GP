@@ -12,24 +12,16 @@
 **********************************************************************************************************************************/
 
 /**************************************************** Library Inclusions *********************************************************/
-#include "../../common/STD_TYPE.h"
+
 /************************************************** Lower Layer Inclusions *******************************************************/
 
 /************************************************** Self Layer Inclusions ********************************************************/
 
 /************************************************** Self Files Inclusions ********************************************************/
-#include "USART_Driver.h"
-#include "USART_Config.h"
+#include "USART.h"
 /************************************************** Global Variables **************************************************************/
 static void (*USARTx_CallBack[3])(void)={NULL,NULL,NULL};
-/************************************************** Base-Addresses ***************************************************************/
-#define USART1_BASE_ADDRESS		(0x40011000)
-#define USART2_BASE_ADDRESS		(0x40004400)
-#define USART6_BASE_ADDRESS		(0x40011400)
-/************************************************** Registers *******************************************************************/
-#define USART1					((volatile USART_t*)USART1_BASE_ADDRESS)
-#define USART2					((volatile USART_t*)USART2_BASE_ADDRESS)
-#define USART6					((volatile USART_t*)USART6_BASE_ADDRESS)
+
 /************************************************** CR1-Registers BITS ***********************************************************/
 #define SBK_BIT					    0
 #define RWU_BIT					    1
@@ -84,15 +76,7 @@ static void (*USARTx_CallBack[3])(void)={NULL,NULL,NULL};
 /*******************************************************************************************************************************/
 /************************************************Data Types*********************************************************************/
 /*******************************************************************************************************************************/
-typedef struct{
-	u32 SR;
-	u32 DR;
-	u32 BBR;
-	u32 CR1;
-	u32 CR2;
-	u32 CR3;
-	u32 GTPR;
-}USART_t;
+
 
 typedef enum{
 	USART_OK,
@@ -112,51 +96,51 @@ static USART_State USART_WaitOnFlagTimeout(u32 USART,u32 Flag,u32 TimeOut);
 /***********************************************************************************************************************************/
 
 
-ret_t MUSART_voidInit(u32 USART)
+Error_t MUSART_voidInit(u32 USART)
 {
 	if(USART==USART_1)
 	{
-		USART1 -> CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)          	 | (PARITY_EN << PCE_BIT) 	 |
+		USART1->CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)          	 | (PARITY_EN << PCE_BIT) 	 |
 						(PEINT_EN << PEIE_BIT) | (TX_INT_EN << TXEIE_BIT)    | (RX_INT_EN << RXNEIE_BIT) |
 						(TCINT_EN << TCIE_BIT) | (IDLE_INT_EN << IDLEIE_BIT))|
 						(WORD_LENGHT << M_BIT) | (OVER_SAMPLE << OVER8_BIT)	 | (PARITY_SELECTION<<PS_BIT)|(SEND_BREAK<<SBK_BIT)|(RECEIVE_WAKEUP<<WAKE_BIT);
 
-		USART1 -> CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
-		USART1 -> BBR = BUDE_RATE;
-		USART1 -> SR  = 0x0;
-		USART1-> CR1 |= (USART_EN << UE_BIT);
-		return ret_OK;
+		USART1->CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
+		USART1->BRR = BUDE_RATE;
+		USART1->SR  = 0x0;
+		USART1->CR1 |= (USART_EN << UE_BIT);
+		return NoError;
 	}
 	else if(USART==USART_2)
 	{
-		USART2 -> CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)            | (PARITY_EN << PCE_BIT)    |
+		USART2->CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)            | (PARITY_EN << PCE_BIT)    |
 						(PEINT_EN << PEIE_BIT) | (TX_INT_EN << TXEIE_BIT)    | (RX_INT_EN << RXNEIE_BIT) |
 						(TCINT_EN << TCIE_BIT) | (IDLE_INT_EN << IDLEIE_BIT))|
 						(WORD_LENGHT << M_BIT) | (OVER_SAMPLE << OVER8_BIT)	 | (PARITY_SELECTION<<PS_BIT)|(SEND_BREAK<<SBK_BIT)|(RECEIVE_WAKEUP<<WAKE_BIT);
 
-		USART2 -> CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
-		USART2 -> BBR = BUDE_RATE;
-		USART2-> CR1 |= (USART_EN << UE_BIT);
-		return ret_OK;
+		USART2->CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
+		USART2->BRR = BUDE_RATE;
+		USART2->CR1 |= (USART_EN << UE_BIT);
+		return NoError;
 	}
 	else if(USART==USART_6)
 	{
-		USART6 -> CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)            | (PARITY_EN << PCE_BIT)    |
+		USART6->CR1 =((T_EN << TE_BIT)   	   | (R_EN << RE_BIT)            | (PARITY_EN << PCE_BIT)    |
 						(PEINT_EN << PEIE_BIT) | (TX_INT_EN << TXEIE_BIT)    | (RX_INT_EN << RXNEIE_BIT) |
 						(TCINT_EN << TCIE_BIT) | (IDLE_INT_EN << IDLEIE_BIT))|
 						(WORD_LENGHT << M_BIT) | (OVER_SAMPLE << OVER8_BIT)	 | (PARITY_SELECTION<<PS_BIT)|(SEND_BREAK<<SBK_BIT)|(RECEIVE_WAKEUP<<WAKE_BIT);
 
-		USART6 -> CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
-		USART6 -> BBR = BUDE_RATE;
-		USART6-> CR1 |= (USART_EN << UE_BIT);
-		return ret_OK;
+		USART6 ->CR2 =((CLK_EN << CLKEN_BIT) | (STOP_BIT << STOP_BITS) | (CLK_POLARITY << CPOL_BIT) | (CLK_PHASE << CPHA_BIT));
+		USART6 ->BRR = BUDE_RATE;
+		USART6->CR1 |= (USART_EN << UE_BIT);
+		return NoError;
 	}
 	else
-		return ret_Error;
+		return Error;
 }
 
 
-ret_t MUSART_ret_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut)
+Error_t MUSART_Error_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut)
 {
 	switch (USART)
 	{
@@ -187,9 +171,9 @@ ret_t MUSART_ret_tSendByteSync(u32 USART,u8 Data_Byte,u32 TimeOut)
 				/*Clear the flag*/
 				USART6->SR &= ~(1<<TC);
 				break;
-	default: return ret_Error;
+	default: return Error;
 	}
-	return ret_OK;
+	return NoError;
 }
 
 
@@ -203,17 +187,18 @@ u8 MUSART_u8ReceiveByteSync(u32 USART,u32 TimeOut)
 		else if(USART==USART_6) return ((USART6->DR) & 0xFF);
 		else 					{/*return nothing*/};
 	}
+	return USART_ERROR;
 }
 
 
-ret_t MUSART_ret_tSendStringSync(u32 USART,u8 *Send_Strg,u32 TimeOut)
+Error_t MUSART_Error_tSendStringSync(u32 USART,u8 *Send_Strg,u32 TimeOut)
 {
 	while ((*Send_Strg) != '\0')
 	{
-		MUSART_ret_tSendByteSync(USART,(*Send_Strg),TimeOut);
+		MUSART_Error_tSendByteSync(USART,(*Send_Strg),TimeOut);
 		Send_Strg++;
 	}
-	return ret_OK;
+	return NoError;
 }
 
 
@@ -262,7 +247,7 @@ void USART1_IRQHandler(void)
 	if(USARTx_CallBack[0]!=NULL)
 	{
 		USARTx_CallBack[0]();
-		USART1 ->SR =0;
+		USART1->SR =0;
 	}
 }
 
@@ -271,7 +256,7 @@ void USART2_IRQHandler(void)
 	if(USARTx_CallBack[1]!=NULL)
 	{
 		USARTx_CallBack[1]();
-		USART2 ->SR =0;
+		USART2->SR =0;
 	}
 }
 
@@ -280,7 +265,7 @@ void USART6_IRQHandler(void)
 	if(USARTx_CallBack[2]!=NULL)
 	{
 		USARTx_CallBack[2]();
-		USART6 ->SR =0;
+		USART6->SR =0;
 	}
 }
 
@@ -403,6 +388,3 @@ static USART_State USART_WaitOnFlagTimeout(u32 USART,u32 Flag,u32 TimeOut)
 		return USART_ERROR;
 	}
 }
-
-
-

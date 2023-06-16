@@ -30,7 +30,7 @@ void MTIMER3_Init(u8 Chanel)
 	u8 ClockPort = (GPIOx == GPIOA) ? AHB1_GPIOA : AHB1_GPIOB;
 	MRCC_voidSetPeripheralStaus(Bus_AHB1, ClockPort, STATUS_ENABLE);
 	MGPIO_Init(GPIOx, &PinConfig);
-	GPIOx->AFRL |= 2 << (PinConfig.PinNumber * 4);
+	MGPIO_SetAlternateFun(GPIOA, PinConfig.PinNumber, AF2);
 
 	/*Enable Timer3 clock to be 16 / 8 = 2 MHz*/
 	MRCC_voidSetBusPrescaler(Bus_APB1, PRESCALER_APB_8);

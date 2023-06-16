@@ -2,6 +2,10 @@
 #ifndef ULTRASONIC_H_
 #define ULTRASONIC_H_
 
+/*********************includes*********************/
+#include "UltraSonic_cfg.h"
+
+
 /*************************************************************************************************************************************
 * Function Name         : UltraSonic_voidInit                                                                                        *
 * Input Parameters(in)  : None                                                                                                       *
