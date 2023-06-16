@@ -1,8 +1,7 @@
 /*********************includes*********************/
-#include "../../UTIL/Types.h"
+#include "../../MCAL/TIMER/TIMER.h"
 #include "../../MCAL/GPIO/GPIO.h"
 #include "Servo_Motor.h"
-#include "Servo_Motor_Config.h"
 
 void HServo_Init(void)
 {
@@ -21,5 +20,5 @@ void HServo_Init(void)
 void HServo_Rotate(u16 Angle)
 {
 	/*set the servo control pin to be driven by PWM signal of frequency = Servo_Frequency, and duty cycle corresponding to the desired angle*/
-	MTimer3_PWMInit(Servo_Frequency, Angle, Servo_ControlPort, Servo_ControlPin);
+	MTimer_GeneratePWM(TIMER3, Servo_Frequency, Angle);
 }

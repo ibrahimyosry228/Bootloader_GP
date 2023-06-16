@@ -13,6 +13,10 @@
 #define PERIPHERALS_BASE				0x40000000UL
 #define CORTEX_M4_PERIPHERALS_BASE		0xE0000000UL
 
+/*********************Base addresses for Cortex-M4 internal Peripherals*********************/
+/*********************NVIC Peripheral*********************/
+#define NVIC_BASE    					0xE000E100UL
+
 /*********************Base addresses for AHB2 BUS Peripherals*********************/
 /*********************USB OTG FS Peripheral*********************/
 #define USB_BASE 						0x50000000UL
@@ -20,6 +24,8 @@
 /*********************Base addresses for AHB1 BUS Peripherals*********************/
 /*********************RCC Peripheral*********************/
 #define RCC_BASE 						0x40023800UL
+/*********************Flash Peripheral*********************/
+#define FLASH_BASE     					0x40023C00
 
 /*********************GPIO Peripheral*********************/
 /*Ports A, B are fully included in UQFN48 package (except for PB11)*/
@@ -58,6 +64,25 @@
 
 
 /*********************Peripheral registers*********************/
+/*********************NVIC Peripheral**********************/
+typedef struct
+{
+	v_u32 ISER[8];
+	v_u32 Res_1[24];
+	v_u32 ICER[8];
+	v_u32 Res_2[24];
+	v_u32 ISPR[8];
+	v_u32 Res_3[24];
+	v_u32 ICPR[8];
+	v_u32 Res_4[24];
+	v_u32 IABR[8];
+	v_u32 Res_5[56];
+	v_u8  IPR[240];
+	v_u32 Res_6[580];
+	v_u32 STIR;
+}
+NVIC_t;
+
 /*********************RCC Peripheral**********************/
 typedef struct
 {
@@ -129,6 +154,20 @@ typedef struct
 }
 SYSCFG_t;
 
+
+/*********************Flash Peripheral*********************/
+typedef struct
+{
+	v_u32 FLASH_ACR;
+	v_u32 FLASH_KEYR;
+	v_u32 FLASH_OPTKEYR;
+	v_u32 FLASH_SR;
+	v_u32 FLASH_CR;
+	v_u32 FLASH_OPTCR;
+
+}FLASH_t;
+
+
 /*********************EXTI Peripheral*********************/
 typedef struct
 {
@@ -157,32 +196,34 @@ USART_t;
 /*********************TIMER Peripheral*********************/
 typedef struct
 {
-	u32 CR1;              /*!< TIM control register 1,              Address offset: 0x00 */
-	u32 CR2;              /*!< TIM control register 2,              Address offset: 0x04 */
-	u32 SMCR;             /*!< TIM slave mode control register,     Address offset: 0x08 */
-	u32 DIER;             /*!< TIM DMA/interrupt enable register,   Address offset: 0x0C */
-	u32 SR;               /*!< TIM status register,                 Address offset: 0x10 */
-	u32 EGR;              /*!< TIM event generation register,       Address offset: 0x14 */
-	u32 CCMR1;            /*!< TIM capture/compare mode register 1, Address offset: 0x18 */
-	u32 CCMR2;            /*!< TIM capture/compare mode register 2, Address offset: 0x1C */
-	u32 CCER;             /*!< TIM capture/compare enable register, Address offset: 0x20 */
-	u32 CNT;              /*!< TIM counter register,                Address offset: 0x24 */
-	u32 PSC;              /*!< TIM prescaler,                       Address offset: 0x28 */
-	u32 ARR;              /*!< TIM auto-reload register,            Address offset: 0x2C */
-	u32 RESERVED0;		  /*!< Reserved,							Address offset: 0x30 */
-	u32 CCR1;             /*!< TIM capture/compare register 1,      Address offset: 0x34 */
-	u32 CCR2;             /*!< TIM capture/compare register 2,      Address offset: 0x38 */
-	u32 CCR3;             /*!< TIM capture/compare register 3,      Address offset: 0x3C */
-	u32 CCR4;             /*!< TIM capture/compare register 4,      Address offset: 0x40 */
-	u32 RESERVED1;		  /*!< Reserved,							Address offset: 0x44 */
-	u32 DCR;              /*!< TIM DMA control register,            Address offset: 0x48 */
-	u32 DMAR;             /*!< TIM DMA address for full transfer,   Address offset: 0x4C */
-	u32 OR;               /*!< TIM option register,                 Address offset: 0x50 */
+	v_u32 CR1;              /*!< TIM control register 1,              Address offset: 0x00 */
+	v_u32 CR2;              /*!< TIM control register 2,              Address offset: 0x04 */
+	v_u32 SMCR;             /*!< TIM slave mode control register,     Address offset: 0x08 */
+	v_u32 DIER;             /*!< TIM DMA/interrupt enable register,   Address offset: 0x0C */
+	v_u32 SR;               /*!< TIM status register,                 Address offset: 0x10 */
+	v_u32 EGR;              /*!< TIM event generation register,       Address offset: 0x14 */
+	v_u32 CCMR1;            /*!< TIM capture/compare mode register 1, Address offset: 0x18 */
+	v_u32 CCMR2;            /*!< TIM capture/compare mode register 2, Address offset: 0x1C */
+	v_u32 CCER;             /*!< TIM capture/compare enable register, Address offset: 0x20 */
+	v_u32 CNT;              /*!< TIM counter register,                Address offset: 0x24 */
+	v_u32 PSC;              /*!< TIM prescaler,                       Address offset: 0x28 */
+	v_u32 ARR;              /*!< TIM auto-reload register,            Address offset: 0x2C */
+	v_u32 RESERVED0;		  /*!< Reserved,							Address offset: 0x30 */
+	v_u32 CCR1;             /*!< TIM capture/compare register 1,      Address offset: 0x34 */
+	v_u32 CCR2;             /*!< TIM capture/compare register 2,      Address offset: 0x38 */
+	v_u32 CCR3;             /*!< TIM capture/compare register 3,      Address offset: 0x3C */
+	v_u32 CCR4;             /*!< TIM capture/compare register 4,      Address offset: 0x40 */
+	v_u32 RESERVED1;		  /*!< Reserved,							Address offset: 0x44 */
+	v_u32 DCR;              /*!< TIM DMA control register,            Address offset: 0x48 */
+	v_u32 DMAR;             /*!< TIM DMA address for full transfer,   Address offset: 0x4C */
+	v_u32 OR;               /*!< TIM option register,                 Address offset: 0x50 */
 }
 TIMER_t;
 
 
 /*********************Peripheral Instants*********************/
+#define NVIC		((NVIC_t*)NVIC_BASE)
+
 #define RCC			((RCC_t*)RCC_BASE)
 
 #define GPIOA		((GPIO_t*)GPIOA_BASE)
@@ -193,6 +234,8 @@ TIMER_t;
 #define GPIOH		((GPIO_t*)GPIOH_BASE)
 
 #define SYSCFG		((SYSCFG_t*)SYSCFG_BASE)
+
+#define FLASH		((FLASH_t*)FLASH_BASE)
 
 #define EXTI		((EXTI_t*)EXTI_BASE)
 
@@ -206,9 +249,9 @@ TIMER_t;
 #define TIMER5		((TIMER_t*)TIM5_BASE)
 
 /*********************interrupt indices*********************/
-#define USART1_IrqNum	37
-#define USART1_IrqNum	38
-#define USART1_IrqNum	71
+//#define USART1_IrqNum	37
+//#define USART1_IrqNum	38
+//#define USART1_IrqNum	71
 
 /*********************clock enable Macros*********************/
 #define RCC_GPIOA_CLK_EN()			(RCC->AHB1ENR |= 1 << 0)
