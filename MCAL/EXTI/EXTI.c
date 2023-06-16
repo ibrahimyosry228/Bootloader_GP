@@ -1,7 +1,7 @@
 #include "EXTI.h"
 
-static void (*EXTI0CallBackFun)(void);
-static void (*EXTI1CallBackFun)(void);
+static PtrFun EXTI0CallBackFun;
+static PtrFun EXTI1CallBackFun;
 
 
 void MEXTI_LineInterruptMusk(u8 EXTI_lineNumber, u8 EXTI_State)
@@ -47,13 +47,19 @@ void MEXTIxSource(u8 EXTIx, u8 EXITsrc)
 void MEXTI0_SetCallbackFun(PtrFun ptr)
 {
     if (ptr != NULL)
+    {
         EXTI0CallBackFun = ptr;
+
+    }
 }
 
 void MEXTI1_SetCallbackFun(PtrFun ptr)
 {
     if (ptr != NULL)
+    {
         EXTI1CallBackFun = ptr;
+
+    }
 }
 
 void EXTI0_IRQHandler(void)

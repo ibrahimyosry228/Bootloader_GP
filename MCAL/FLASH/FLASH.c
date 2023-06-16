@@ -1,9 +1,6 @@
 #include "FLASH.h"
 
 
-/*************************************************Flash interface Base Address******************************************/
-#define FLASH_BaseAddress     							0x40023C00
-
 /***********************************************Sector Erase Bits Masking***********************************************/
 #define SECTOR_ERASE_MASK								0xF
 #define SECTOR_ERASE_SHIFTBITS							3
@@ -20,19 +17,7 @@
 /***********************************************Unlock Keys to access flash control register***************************/
 #define KEY1  		 									0x45670123
 #define	KEY2 											0xCDEF89AB
-/***********************************************typedefs***************************************************************/
-typedef struct
-{
-	volatile u32 FLASH_ACR;
-	volatile u32 FLASH_KEYR;
-	volatile u32 FLASH_OPTKEYR;
-	volatile u32 FLASH_SR;
-	volatile u32 FLASH_CR;
-	volatile u32 FLASH_OPTCR;
 
-}FLASH_REGS;
-/****************************************************Variables**********************************************************/
-static volatile FLASH_REGS * const FLASH = (volatile FLASH_REGS * const) FLASH_BaseAddress ;
 /*********************************Static function to unlock FLASH_KEYR register****************************************/
 static void FlashUnlock(void);
 /**************************************************Flash Interface Functions*******************************************/
@@ -50,11 +35,11 @@ void MFLASH_voidSectorErase(u8 SectorNum )
 {
 
 	u32 temp;
-	while(GET_BIT(FLASH-> FLASH_SR, BSY_BIT) == 1);
+	while((FLASH-> FLASH_SR >> BSY_BIT) & 1);
 
 	FlashUnlock();
 
-	SET_BIT(FLASH->FLASH_CR, SER_BIT);
+	FLASH->FLASH_CR |= (1 << SER_BIT);
 
 	//FLASH->FLASH_AR =  (FLASH_PAGE0_ADDRESS) + (u32) (Copy_u8PageNum * PageSize);
 
@@ -109,7 +94,7 @@ void MFLASH_voidWrite(u32 Address, u16 * Data, u8 Length)
 
 static void FlashUnlock(void)
 {
-	if(GET_BIT(FLASH->FLASH_CR, LOCK_BIT) == 1)
+	if((FLASH->FLASH_CR >> LOCK_BIT) & 1)
 	{
 		FLASH->FLASH_KEYR = KEY1;
 		FLASH->FLASH_KEYR = KEY2;
