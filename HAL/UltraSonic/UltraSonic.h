@@ -1,4 +1,3 @@
-
 #ifndef ULTRASONIC_H_
 #define ULTRASONIC_H_
 
@@ -24,4 +23,4 @@ void UltraSonic_voidInit(void);
 float UltraSonic_floatGetDistance(void);
 
 
-#endif /* ULTRASONIC_H_ */
+#endif

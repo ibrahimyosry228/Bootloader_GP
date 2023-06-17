@@ -5,20 +5,12 @@
 
 void HServo_Init(void)
 {
-	/*set the output speed of the servo control pin to be low*/
-	GPIO_PinConfig_t PinConfig;
-	PinConfig.OutputSpeed = Speed_Low;
-
-	/*set the servo control pin to be Alternate function output push pull*/
-	PinConfig.PinMode = Mode_OutputAFPP;
-
-	/*set the servo control pin number according to the config file*/
-	PinConfig.PinNumber = Servo_ControlPin;
-	MGPIO_Init(Servo_ControlPort, &PinConfig);
+	/*Initialize the timer chanels connected to servo control pin according to the config file*/
+	MTIMER3_Init(Servo_ControlChanel);
 }
 
 void HServo_Rotate(u16 Angle)
 {
 	/*set the servo control pin to be driven by PWM signal of frequency = Servo_Frequency, and duty cycle corresponding to the desired angle*/
-	MTimer_GeneratePWM(TIMER3, Servo_Frequency, Angle);
+	MTimer_GeneratePWM(TIMER3, Servo_ControlChanel, Servo_Frequency, Angle);
 }
