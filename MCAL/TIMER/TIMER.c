@@ -27,26 +27,44 @@ void MTIMER3_Init(u8 Chanel)
 			PinConfig.PinNumber = PIN1;
 			break;
 	}
-	u8 ClockPort = (GPIOx == GPIOA) ? AHB1_GPIOA : AHB1_GPIOB;
-	MRCC_voidSetPeripheralStaus(Bus_AHB1, ClockPort, STATUS_ENABLE);
+	u8 PwmPort = (GPIOx == GPIOA) ? AHB1_GPIOA : AHB1_GPIOB;
+	MRCC_voidSetPeripheralStaus(Bus_AHB1, PwmPort, STATUS_ENABLE);
 	MGPIO_Init(GPIOx, &PinConfig);
-	MGPIO_SetAlternateFun(GPIOA, PinConfig.PinNumber, AF2);
+	MGPIO_SetAlternateFun(GPIOx, PinConfig.PinNumber, AF2);
 
-	/*Enable Timer3 clock to be 16 / 8 = 2 MHz*/
-	MRCC_voidSetBusPrescaler(Bus_APB1, PRESCALER_APB_8);
+	/*Enable Timer3 clock to be the same as APB1 clock = 16 MHz*/
 	MRCC_voidSetPeripheralStaus(Bus_APB1, APB1_TIM3, STATUS_ENABLE);
 }
 
-void MTimer_GeneratePWM(TIMER_t* Timer, u32 Frequency, u16 Duty)
+void MTimer_GeneratePWM(TIMER_t* Timer, u8 Chanel, u32 Frequency, u16 Duty)
 {
-	/* Set Capture/Compare 1 as output */
-	Timer->CCMR1 &= ~TIMER_CCMR1_CC1S;
+	/*Set Capture/Compare 1 as output */
+	switch (Chanel)
+	{
+		case Chanel_1: Timer->CCMR1 &= ~TIMER_CCMR1_CC1S;	break;
+		case Chanel_2: Timer->CCMR1 &= ~TIMER_CCMR1_CC2S;	break;
+		case Chanel_3: Timer->CCMR2 &= ~TIMER_CCMR2_CC3S;	break;
+		case Chanel_4: Timer->CCMR2 &= ~TIMER_CCMR2_CC4S;	break;
+	}
+
 
 	/*Configure the output compare channel for PWM mode1*/
-	Timer->CCMR1 |= (TIMER_CCMR1_OC1M_1 | TIMER_CCMR1_OC1M_2);
+	switch (Chanel)
+	{
+		case Chanel_1: Timer->CCMR1 |= TIMER_CCMR1_OC1M_PWM1;	break;
+		case Chanel_2: Timer->CCMR1 |= TIMER_CCMR1_OC2M_PWM1;	break;
+		case Chanel_3: Timer->CCMR2 |= TIMER_CCMR2_OC3M_PWM1;	break;
+		case Chanel_4: Timer->CCMR2 |= TIMER_CCMR2_OC4M_PWM1;	break;
+	}
 
 	/* Output Compare 1 preload enable */
-	Timer->CCMR1 |= TIMER_CCMR1_OC1PE;
+	switch (Chanel)
+	{
+		case Chanel_1: Timer->CCMR1 |= TIMER_CCMR1_OC1PE;	break;
+		case Chanel_2: Timer->CCMR1 |= TIMER_CCMR1_OC2PE;	break;
+		case Chanel_3: Timer->CCMR2 |= TIMER_CCMR2_OC3PE;	break;
+		case Chanel_4: Timer->CCMR2 |= TIMER_CCMR2_OC4PE;	break;
+	}
 
 	/*Set counter direction as up-counter*/
 	Timer->CR1 &= ~(TIMER_CR1_DIR | TIMER_CR1_CMS);
@@ -54,14 +72,21 @@ void MTimer_GeneratePWM(TIMER_t* Timer, u32 Frequency, u16 Duty)
 	/*Enable Auto-reload preload */
 	Timer->CR1 |= TIMER_CR1_ARPE;
 
-	Timer->CCER |= TIMER_CCER_CC1E;
+	/*Enable output pin for the selected chanel*/
+	Timer->CCER |= 1 << (Chanel * 4);
 
 	/*Configure the timer prescaler and period to generate the desired frequency*/
-	Timer->PSC = Timer_Clk / Frequency - 1;
 	Timer->ARR = ARR_Value;
+	Timer->PSC = Timer_Clk / (Frequency * ARR_Value) - 1;
 
 	/*Set the initial duty cycle*/
-	Timer->CCR1 = ARR_Value * Duty / Max_Duty;
+	switch (Chanel)
+	{
+		case Chanel_1: Timer->CCR1 = ARR_Value * Duty / Max_Duty;	break;
+		case Chanel_2: Timer->CCR2 = ARR_Value * Duty / Max_Duty;	break;
+		case Chanel_3: Timer->CCR3 = ARR_Value * Duty / Max_Duty;	break;
+		case Chanel_4: Timer->CCR4 = ARR_Value * Duty / Max_Duty;	break;
+	}
 
 	/* Initialize all the registers */
 	Timer->EGR |= TIMER_EGR_UG;

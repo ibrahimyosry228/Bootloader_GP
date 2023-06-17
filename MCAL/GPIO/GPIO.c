@@ -23,6 +23,7 @@ void MGPIO_Init(GPIO_t* GPIOx, GPIO_PinConfig_t* PinConfig)
 		temp = GPIOx->OSPEEDR;
 		temp &= ~(3 << (PinConfig->PinNumber * 2));
 		temp |= (PinConfig->OutputSpeed << (PinConfig->PinNumber * 2));
+		GPIOx->OSPEEDR = temp;
 	}
 
 	/*if the pin is to be configured as input, select its connection to be floating, pull up or pull down*/
@@ -31,6 +32,7 @@ void MGPIO_Init(GPIO_t* GPIOx, GPIO_PinConfig_t* PinConfig)
 		temp = GPIOx->PUPDR;
 		temp &= ~(3 << (PinConfig->PinNumber * 2));
 		temp |= ((PinConfig->PinMode & 0x3) << (PinConfig->PinNumber * 2));
+		GPIOx->PUPDR = temp;
 	}
 }
 
@@ -107,5 +109,5 @@ void MGPIO_SetAlternateFun(GPIO_t* GPIOx, u8 PinNumber, u8 AF)
 {
 	u32* AFR;
 	AFR = (PinNumber < PIN8) ? &GPIOx->AFRL : &GPIOx->AFRH;
-	*AFR |= AF << (PinNumber * 4);
+	*AFR |= AF << ((PinNumber % 8) * 4);
 }

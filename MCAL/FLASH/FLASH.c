@@ -35,7 +35,7 @@ void MFLASH_voidAreaErase(void)
 
 void MFLASH_voidSectorErase(u8 SectorNum )
 {
-	uint32 temp;
+	u32 temp;
 
 	/*Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register */
 	while((FLASH-> FLASH_SR >> BSY_BIT) & 1);
@@ -64,8 +64,8 @@ void MFLASH_voidSectorErase(u8 SectorNum )
 
 void MFLASH_voidWrite(u32 Address, u16 * Data, u8 Length)
 {
-	uint8 LoopCounter;
-	uint32 temp;
+	u8 LoopCounter;
+	u32 temp;
 	/*Check that no Flash memory operation is ongoing by checking the BSY bit in the FLASH_SR register */
 	while((FLASH-> FLASH_SR >> BSY_BIT) & 1);
 
