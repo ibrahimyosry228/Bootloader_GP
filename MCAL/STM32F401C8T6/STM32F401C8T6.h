@@ -208,12 +208,12 @@ typedef struct
 	v_u32 CNT;              /*!< TIM counter register,                Address offset: 0x24 */
 	v_u32 PSC;              /*!< TIM prescaler,                       Address offset: 0x28 */
 	v_u32 ARR;              /*!< TIM auto-reload register,            Address offset: 0x2C */
-	v_u32 RESERVED0;		  /*!< Reserved,							Address offset: 0x30 */
+	v_u32 RESERVED0;		/*!< Reserved,							  Address offset: 0x30 */
 	v_u32 CCR1;             /*!< TIM capture/compare register 1,      Address offset: 0x34 */
 	v_u32 CCR2;             /*!< TIM capture/compare register 2,      Address offset: 0x38 */
 	v_u32 CCR3;             /*!< TIM capture/compare register 3,      Address offset: 0x3C */
 	v_u32 CCR4;             /*!< TIM capture/compare register 4,      Address offset: 0x40 */
-	v_u32 RESERVED1;		  /*!< Reserved,							Address offset: 0x44 */
+	v_u32 RESERVED1;	    /*!< Reserved,						   	  Address offset: 0x44 */
 	v_u32 DCR;              /*!< TIM DMA control register,            Address offset: 0x48 */
 	v_u32 DMAR;             /*!< TIM DMA address for full transfer,   Address offset: 0x4C */
 	v_u32 OR;               /*!< TIM option register,                 Address offset: 0x50 */

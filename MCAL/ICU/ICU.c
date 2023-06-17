@@ -33,8 +33,6 @@ typedef struct
 	 u32 DMAR;
 	 u32 TIM2_OR;
 	 u32 TIM5_OR;
-
-
 }TIM_t;
 
 
@@ -159,7 +157,6 @@ Error_t TIM_Error_tSetTriggerInterruptState(TRIGGER_INTERRUPT_STATE_t TRIGGER_IN
 Error_t TIM_Error_tSetChannelState(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL,CHANNEL_STATE_t CHANNEL_STATE)
 {
 	Error_t Error_State=NoError;
-	//u32 temp;
 
 		switch(TIM)
 		{
@@ -412,8 +409,6 @@ u32 TIM_u32GetCaptureValueTIM2_TIM5(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 		case CHANNEL_2: Capture_Value=TIM2->CCR2;break;
 		case CHANNEL_3: Capture_Value=TIM2->CCR3;break;
 		case CHANNEL_4: Capture_Value=TIM2->CCR4;break;
-		//default:
-			//do nothing
 		}
 	}
 	else if(TIM==TIM_5)
@@ -483,7 +478,7 @@ Error_t TIM_Error_tSetPreloadValue(TIM_NUMBER_t TIM,u32 PRELOAD)
 	switch(TIM)
 	{
 	case TIM_1: TIM1->ARR=PRELOAD; break;
-	case TIM_2: TIM2->ARR=PRELOAD; /*TIM2->EGR|=(1<<0);*/ break;
+	case TIM_2: TIM2->ARR=PRELOAD; break;
 	case TIM_3: TIM3->ARR=PRELOAD; break;
 	case TIM_4:	TIM4->ARR=PRELOAD; break;
 	default: Error_State=Error;
@@ -526,6 +521,7 @@ u8 TIM_u8GetFlag(TIM_NUMBER_t TIM,CHANNEL_t CHANNEL)
 	}
 	return Flag;
 }
+
 void TIM_voidSetCounterValue(TIM_NUMBER_t TIM,u32 COUNTER_VALUE)
 {
 	switch(TIM)
@@ -560,17 +556,16 @@ void TIM_voidSet_EGR_UG(TIM_NUMBER_t TIM)
 
 void delay15us(void)
 {
+	TIM4->PSC = 15;
+	TIM4->ARR = 15;
+	TIM4->CNT = 0;
+	TIM4->CR1 |= (1 << 0);
 
-	TIM3->PSC=15;
-	TIM3->ARR=15;
-	TIM3->CNT=0;
-	TIM3->CR1|=(1<<0);
+	while(!(TIM4->SR & 1));
 
-	while(!((TIM3->SR)&1));
-
-	TIM3->CR1&=~(1<<0);
-	TIM3->SR&=~(1<<0);
-	TIM3->CR1|=(1<<0);
+	TIM4->CR1 &= ~(1<<0);
+	TIM4->SR  &= ~(1<<0);
+//	TIM4->CR1 |=  (1<<0);
 
 }
 /*

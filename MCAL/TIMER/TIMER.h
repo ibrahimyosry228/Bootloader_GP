@@ -4,8 +4,8 @@
 /*********************includes*********************/
 #include "../STM32F401C8T6/STM32F401C8T6.h"
 
-#define  Timer_Clk       		 2000000               	 /*!<Timer Clock value      		                */
-#define  ARR_Value       		 100               		 /*!<ARR register value      		                */
+#define  Timer_Clk       		 16000000UL              /*!<Timer Clock value      		                */
+#define  ARR_Value       		 1000               	 /*!<ARR register value      		                */
 #define  Max_Duty       		 1000                    /*!<Duty cycle must be between 0, Max_Duty         */
 
 #define Chanel_1				 0
@@ -19,11 +19,22 @@
 #define  TIMER_CR1_CMS           (u32)0x0060             /*!<CMS[1:0] bits (Center-aligned mode selection) */
 #define  TIMER_CR2_MMS_2         (u32)0x0040             /*!<Bit 2                                         */
 #define  TIMER_SMCR_MSM          (u32)0x0080             /*!<Master/slave mode                             */
-#define  TIMER_CCMR1_CC1S        (u32)0x0003             /*!<CC1S[1:0] bits (Capture/Compare 1 Selection)  */
-#define  TIMER_CCMR1_OC1PE       (u32)0x0008             /*!<Output Compare 1 Preload enable               */
-#define  TIMER_CCMR1_OC1M_0      (u32)0x0010             /*!<Bit 0                                         */
-#define  TIMER_CCMR1_OC1M_1      (u32)0x0020             /*!<Bit 1                                         */
-#define  TIMER_CCMR1_OC1M_2      (u32)0x0040             /*!<Bit 2                                         */
+
+#define  TIMER_CCMR1_CC1S        (u32)0x0003             /*!<Capture/Compare 1 Selection                   */
+#define  TIMER_CCMR1_CC2S        (u32)0x0300             /*!<Capture/Compare 2 Selection                   */
+#define  TIMER_CCMR2_CC3S        (u32)0x0003             /*!<Capture/Compare 3 Selection                   */
+#define  TIMER_CCMR2_CC4S        (u32)0x0300             /*!<Capture/Compare 4 Selection                   */
+
+#define  TIMER_CCMR1_OC1PE       BIT3_MASK               /*!<Output Compare 1 Preload enable               */
+#define  TIMER_CCMR1_OC2PE       BIT11_MASK              /*!<Output Compare 2 Preload enable               */
+#define  TIMER_CCMR2_OC3PE       BIT3_MASK               /*!<Output Compare 3 Preload enable               */
+#define  TIMER_CCMR2_OC4PE       BIT11_MASK              /*!<Output Compare 4 Preload enable               */
+
+#define  TIMER_CCMR1_OC1M_PWM1   (u32)0x0060             /*!<Output Compare 1 PWM1 mode					   */
+#define  TIMER_CCMR1_OC2M_PWM1   (u32)0x6000             /*!<Output Compare 1 PWM1 mode					   */
+#define  TIMER_CCMR2_OC3M_PWM1   (u32)0x0060             /*!<Output Compare 1 PWM1 mode					   */
+#define  TIMER_CCMR2_OC4M_PWM1   (u32)0x6000             /*!<Output Compare 1 PWM1 mode					   */
+
 #define  TIMER_CCER_CC1P         (u32)0x0002             /*!<Capture/Compare 1 output Polarity             */
 #define  TIMER_EGR_UG            (u32)0x0001             /*!<Update Generation                             */
 #define  TIMER_CCER_CC1E         (u32)0x0001             /*!<Capture/Compare 1 output enable               */
@@ -55,7 +66,7 @@ void MTIMER3_Init(u8 Chanel);
  * @Return      - None
  * @Notes       - The duty cycle must be a number between 0 and Max_Duty
  */
-void MTimer_GeneratePWM(TIMER_t* Timer, u32 Frequency, u16 Duty);
+void MTimer_GeneratePWM(TIMER_t* Timer, u8 Chanel, u32 Frequency, u16 Duty);
 
 
 #endif

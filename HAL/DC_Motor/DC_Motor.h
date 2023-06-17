@@ -8,7 +8,7 @@
 #define Direction_Stop          (u8)0
 #define Direction_Forward       (u8)1
 #define Direction_Backward      (u8)2
-#define Direction_right         (u8)3
+#define Direction_Right         (u8)3
 #define Direction_Left          (u8)4
 
 

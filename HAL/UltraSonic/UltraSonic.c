@@ -30,8 +30,10 @@ void UltraSonic_voidInit(void)
 	GPIO_PinConfig_t PinConfig = {PIN4, Mode_OutputPP, Speed_High};
 
 	MRCC_voidSetPeripheralStaus(Bus_AHB1, AHB1_GPIOA, STATUS_ENABLE);
+	/*Enable clock for the input capture timer*/
 	MRCC_voidSetPeripheralStaus(Bus_APB1, APB1_TIM2, STATUS_ENABLE);
-	MRCC_voidSetPeripheralStaus(Bus_APB1, APB1_TIM3, STATUS_ENABLE);
+	/*Enable clock for the delay timer*/
+	MRCC_voidSetPeripheralStaus(Bus_APB1, APB1_TIM4, STATUS_ENABLE);
 	MGPIO_Init(GPIOA, &PinConfig);
 	TIM_Error_tSetPrescaler(TIM_2,15);
 	TIM_Error_tSetPreloadValue(TIM_2,0xffffffff);
@@ -69,13 +71,13 @@ void UltraSonic_voidInit(void)
 
 float UltraSonic_floatGetDistance(void)
 {
-	u32 Captutre_1,Capture_2;
+	u32 Captutre_1, Capture_2;
 	float Distance;
 	MGPIO_WritePin(GPIOA, PIN4, Pin_High);
 	delay15us();
 	MGPIO_WritePin(GPIOA, PIN4, Pin_Low);
 	GetCaptureValues(&Captutre_1,&Capture_2);
-	Distance = GetDistance((Capture_2-Captutre_1));
+	Distance = GetDistance(Capture_2 - Captutre_1);
 	return Distance;
 }
 
@@ -84,10 +86,10 @@ float UltraSonic_floatGetDistance(void)
 
 static float GetDistance(u32 time)
 {
-    return (SPEED_OF_SOUND * time) / (2.0f * 10000.0f);
+    return (SPEED_OF_SOUND * time) / (20000.0f);
 }
 
-static void GetCaptureValues(u32*x1,u32*y1)
+static void GetCaptureValues(u32* x1, u32* y1)
 {
 #if ULTRA_CHANNEL==CHANNEL1
 
@@ -139,26 +141,30 @@ static void GetCaptureValues(u32*x1,u32*y1)
 		TIM_voidSetCounterValue(TIM_2,0);
 
 #elif ULTRA_CHANNEL==CHANNEL4
-		while(!TIM_u8GetFlag(TIM_2,CHANNEL_4));
 
-		*x1=TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_4);
+		/*Wait for rising edge*/
+		while(!TIM_u8GetFlag(TIM_2,CHANNEL_4));
+		/*Store the captured value*/
+		*x1 = TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_4);
+		/*Reinitialize the counter*/
 		TIM_voidSet_EGR_UG(TIM_2);
+		/*Enable the counter again*/
 	    TIM_Error_tSetCounterState(COUNTER_STATE_ENABLE,TIM_2);
+	    /*Set the input capture unit to to trigger on falling edge*/
 		TIM_Error_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_4,INPUT_CAPTURE_TRIGGER_FALLING_EDGE);
 
-
+		/*Wait for falling edge*/
 		while(!TIM_u8GetFlag(TIM_2,CHANNEL_4));
-		*y1=TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_4);
+		/*Store the captured value*/
+		*y1 = TIM_u32GetCaptureValueTIM2_TIM5(TIM_2,CHANNEL_4);
+		/*Set the input capture unit to to trigger on rising edge*/
 		TIM_Error_tSetInputCaptureEdgeTrigger(TIM_2,CHANNEL_4,INPUT_CAPTURE_TRIGGER_RISING_EDGE);
+		/*Disable the counter*/
 		TIM_Error_tSetCounterState(COUNTER_STATE_DISABLE,TIM_2);
+		/*Clear the counter flag*/
 		TIM_voidClearCounterFlag(TIM_2);
+		/*Reinitialize the counter*/
 		TIM_voidSetCounterValue(TIM_2,0);
 #endif
 
 }
-
-
-
-
-
-
