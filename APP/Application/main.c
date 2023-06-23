@@ -5,9 +5,9 @@
 #include "Bootloader_GP/HAL/UltraSonic/UltraSonic.h"
 
 /*Time delay for each system component*/
-#define Delay_Initial		100
-#define Delay_Forward		50
-#define Delay_Backward		150
+#define Delay_Initial			100
+#define Delay_Forward			50
+#define Delay_Backward			150
 #define Delay_Servo			200
 #define Delay_LR			500
 
@@ -17,13 +17,13 @@
 /*Angles definition for servo motor rotation*/
 #define Angle_Left			120
 #define Angle_Right			20
-#define Angle_Forward		60
+#define Angle_Forward			60
 
 /*Mininmum distance to avoid objects*/
-#define Obstacle_Distance	40
+#define Obstacle_Distance		40
 
 /*Delay macro*/
-#define delay(time)		for (u32 i = 0; i < 10000 * time; i++)
+#define delay(time)			for (u32 i = 0; i < 10000 * time; i++)
 
 
 void main()
